@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "dacdaq"
+version = "0.1.0"
+description = "Diamond anvil cell data acquisition"
+authors = ["James J. Hamlin"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+numpy = "^1.26.4"
+pandas = "^2.2.2"
+matplotlib = "^3.8.4"
+pyside6 = "^6.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
