@@ -6,11 +6,14 @@ authors = ["James J. Hamlin"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.11,<3.12"
 numpy = "^1.26.4"
 pandas = "^2.2.2"
 matplotlib = "^3.8.4"
-pyside6 = "^6.7.0"
+pyside6 = "6.4.2"
+pyqt6 = "6.4.2"
+pyqt6-qt6 = "6.4.2"
+qt6-tools = "^6.5.0.1.3"
 
 
 [build-system]
