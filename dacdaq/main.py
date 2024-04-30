@@ -1,5 +1,6 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, uic
+from PyQt6 import uic
+from PyQt6.QtWidgets import QApplication, QWidget
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
