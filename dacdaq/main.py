@@ -1,39 +1,28 @@
-import sys
+from PyQt6 import QtWidgets, uic
+from pyqtgraph import PlotWidget
 import pyqtgraph as pg
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import QFile
-from mainwindow import Ui_MainWindow
+import numpy as np
+import sys
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self, *args, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
 
-    window = MainWindow()
-    window.show()
+        # Load the UI Page
+        uic.loadUi("./ui/mainwindow.ui", self)
 
+        x = np.random.random(10)
+        y = np.random.random(10)
+        self.mainPlot.plot(x, y)
+
+
+def main():
+    app = QtWidgets.QApplication(sys.argv)
+    main = MainWindow()
+    main.show()
     sys.exit(app.exec())
 
-'''
-    x = np.random.random(10)
-    y = np.random.random(10)
 
-    app = QApplication(sys.argv)
-
-    window = uic.loadUi("ui/dacdaq.ui")
-
-    plotWidget = pg.PlotWidget()
-
-    # Set the title of the plot
-    plotWidget.setWindowTitle("PyQtGraph Example")
-
-    # Add a curve to the plot
-    plotWidget.plot(x, y)
-
-    # Show the plot
-    plotWidget.show()
-'''
+if __name__ == "__main__":
+    main()
