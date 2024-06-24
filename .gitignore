@@ -1,5 +1,6 @@
 # Added by JJH
 ./myqttest/myqttest.pyproject.user
+dacdaq/temporary_data_file.dat
 
 # Github default Python.gitignore
 # Byte-compiled / optimized / DLL files
