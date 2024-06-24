@@ -1,4 +1,5 @@
 from PyQt6 import QtWidgets, uic
+from PyQt6.QtCore import QTimer
 from pyqtgraph import PlotWidget
 import pyqtgraph as pg
 import numpy as np
@@ -12,9 +13,15 @@ class MainWindow(QtWidgets.QMainWindow):
         # Load the UI Page
         uic.loadUi("./ui/mainwindow.ui", self)
 
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_label)
+        self.timer.start(1)  # Update every 1000 milliseconds (1 second)
+
+    def update_label(self):
         x = np.random.random(10)
         y = np.random.random(10)
-        self.mainPlot.plot(x, y)
+        self.mainPlot.clear()
+        self.mainPlot.plot(x, y)  # Setup timer
 
 
 def main():
