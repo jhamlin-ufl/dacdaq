@@ -39,16 +39,13 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.plot_widget)
 
         self.timer = QTimer(self)
-
         self.timer.timeout.connect(self.update_plot)
-
         self.timer.start(100)
 
         self.update_plot()
 
     def update_plot(self):
         df = read_file_with_lock("./temporary_data_file.dat")
-
         self.plot_widget.plot(df.x, df.y)
 
 
