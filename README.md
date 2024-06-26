@@ -2,5 +2,6 @@
 
 QT / Python based data  acquisition program.
 
-## Notes
-- Had to install libxcb-cursor0
+## About this branch
+
+This branch is for developing the data acquisition system using pyvisa etc.
