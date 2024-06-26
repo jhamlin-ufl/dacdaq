@@ -36,7 +36,7 @@ def main():
             file.write(f"{t},{x},{y}\n")
             fcntl.flock(file.fileno(), fcntl.LOCK_UN)
 
-        time.sleep(0.1)
+        time.sleep(1)
 
 
 if __name__ == "__main__":

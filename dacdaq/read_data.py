@@ -4,30 +4,63 @@ A demonstration of plotting a file that is being
 concurrently updated.
 """
 
-import pyqtgraph as pg
-from PyQt6 import QtWidgets
 import fcntl
-import time
-import os
 from pathlib import Path
+import sys
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import QTimer
+import pyqtgraph as pg
+import pandas as pd
+
+
+def read_file_with_lock(file_path):
+    with open(file_path, "r") as file:
+        # Acquire a shared lock on the file (read lock)
+        fcntl.flock(file.fileno(), fcntl.LOCK_SH)
+
+        try:
+            # Read the file content
+            df = pd.read_csv(file)
+        finally:
+            # Release the lock
+            fcntl.flock(file.fileno(), fcntl.LOCK_UN)
+
+    return df
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Create a plot widget
+        self.plot_widget = pg.PlotWidget()
+
+        # Set the central widget of the window
+        self.setCentralWidget(self.plot_widget)
+
+        self.timer = QTimer(self)
+
+        self.timer.timeout.connect(self.update_plot)
+
+        self.timer.start(100)
+
+        self.update_plot()
+
+    def update_plot(self):
+        df = read_file_with_lock("./temporary_data_file.dat")
+
+        self.plot_widget.plot(df.x, df.y)
 
 
 def make_plot():
-    class MainWindow(QtWidgets.QMainWindow):
-        def __init__(self):
-            super().__init__()
+    app = QApplication(sys.argv)
 
-            # Temperature vs time plot
-            self.plot_graph = pg.PlotWidget()
-            self.setCentralWidget(self.plot_graph)
-            minutes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-            temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 30]
-            self.plot_graph.plot(minutes, temperature)
+    # Create an instance of the main window
+    window = MainWindow()
+    window.show()
 
-    app = QtWidgets.QApplication([])
-    main = MainWindow()
-    main.show()
-    app.exec()
+    # Start the Qt event loop
+    sys.exit(app.exec())
 
 
 def main():
