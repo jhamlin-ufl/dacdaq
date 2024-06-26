@@ -19,6 +19,8 @@ ipython = "^8.25.0"
 pyvisa-py = "^0.7.2"
 psutil = "^6.0.0"
 zeroconf = "^0.132.2"
+pyusb = "^1.2.1"
+visa = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
