@@ -4,15 +4,18 @@ version = "0.1.0"
 description = "Diamond anvil cell data acquisition"
 authors = ["James J. Hamlin"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
 numpy = "^1.26.4"
 pandas = "^2.2.2"
 matplotlib = "^3.8.4"
-pyside6 = "^6.7.0"
-pyqt6 = "^6.7.0"
-qt6-tools = "^6.5.0.1.3"
+pymeasure = "^0.14.0"
+pyvisa = "^1.14.1"
+
+[tool.poetry.dev-dependencies]
+ipython = "^8.26.0"
 
 [build-system]
 requires = ["poetry-core"]
