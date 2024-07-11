@@ -25,24 +25,6 @@
 from pymeasure.instruments import Instrument
 from pymeasure.instruments.validators import strict_discrete_set
 
-MODES = {
-    "direct voltage": "VD",
-    "alternating voltage": "VA",
-    "2-wire resistance": "O2",  # Note O not 0! Stupid Prema
-    "4-wire resistance": "O4",  # Note O not 0! Stupid Prema
-    "direct current": "ID",
-    "alternating current": "IA",
-    "celsius": "TC",
-    "farenheit": "TF",
-    "kelvin": "TK",
-}
-
-
-def status_string_to_mode(response_string):
-    lookup = {v: k for k, v in MODES.items()}
-    mode_string = response_string[12:14]
-    return lookup[mode_string]
-
 
 class Prema6000(Instrument):
     """Control the Prema 6000 digital multimeter (DMM) instrument."""
@@ -50,8 +32,8 @@ class Prema6000(Instrument):
     MODES = {
         "direct voltage": "VD",
         "alternating voltage": "VA",
-        "2-wire resistance": "O2",  # Note O not 0! Stupid Prema
-        "4-wire resistance": "O4",  # Note O not 0! Stupid Prema
+        "2-wire resistance": "O2",  # Note O not 0!
+        "4-wire resistance": "O4",  # Note O not 0!
         "direct current": "ID",
         "alternating current": "IA",
         "celsius": "TC",
@@ -59,7 +41,53 @@ class Prema6000(Instrument):
         "kelvin": "TK",
     }
 
-    mode = Instrument.control(
+    @staticmethod
+    def state_to_dict(state_string):
+        CODE_TO_MODE = {
+            "VD": "direct voltage",
+            "VA": "alternating voltage",
+            "O2": "2-wire resistance",
+            "O4": "4-wire resistance",
+            "ID": "direct current",
+            "IA": "alternating current",
+            "TC": "celsius",
+            "TF": "farenheit",
+            "TK": "kelvin",
+        }
+
+        INT_TIMES = {
+            "T1": "100 ms",
+            "T2": "1 s",
+            "T3": "1 s",
+            "T4": "10 s",
+        }
+
+        state_dict = {}
+        state_dict["mode"] = CODE_TO_MODE[state_string[12:14]]
+        state_dict["range"] = state_string[14:16]
+        state_dict["autoranging"] = (
+            "enabled" if state_string[16:18] == "A1" else "disabled"
+        )
+        state_dict["integration time"] = INT_TIMES[state_string[18:20]]
+        state_dict["continuous"] = (
+            "started" if state_string[20:22] == "S1" else "stopped"
+        )
+        state_dict["SRQ status"] = "without" if state_string[22:24] == "Q0" else "with"
+        channel = state_string[25]
+        state_dict["mutiplexer channel"] = "off" if channel == "O" else int(channel)
+        print(state_string[27])
+        state_dict["display mode"] = "on" if state_string[27] == "1" else "off"
+        state_dict["latest pressed key"] = state_string[29]
+
+        return state_dict
+
+    state = Instrument.measurement(
+        "P0",
+        """ Returns a dictionary describing the state of the instrument. """,
+        get_process=state_to_dict,
+    )
+
+    old_mode = Instrument.control(
         "P0",
         "%s",
         """ A string property that controls the configuration mode for measurements,
@@ -69,6 +97,21 @@ class Prema6000(Instrument):
         validator=strict_discrete_set,
         values=MODES,
         map_values=True,
+    )
+
+    set_mode = Instrument.setting("%s", """ Set the mode.""")
+
+    get_mode = Instrument.setting("P0", """ Get the mode.""")
+
+    mode = Instrument.control(
+        "P0",
+        "%s",
+        """ A string property that controls the configuration mode for measurements,
+        which can take the values: ``direct voltage``, ``alternating voltage``,
+        ``2-wire resistance``, ``4-wire resistance``, ``direct current``,
+        ``alternating current``, ``celsius``, ``farenheit``, or ``kelvin``.""",
+        get_process=get_mode,
+        set_process=set_mode,
     )
 
     return_mode = Instrument.control(
@@ -139,22 +182,7 @@ class Prema6000(Instrument):
 
 
 sourcemeter = Prema6000("GPIB::7")
-sourcemeter.mode = "4-wire resistance"
-print(f"{sourcemeter.resistance = }")
-print(f'{sourcemeter.ask("P0") = }')
-print(f"{sourcemeter.mode = }")
-
-
-class Foobar:
-    def myfunc(self, something):
-        print(f"{something} is cool!")
-
-    def anotherfunc(self, something):
-        print("calling anotherfunc and then calling myfunc...")
-        self.myfunc(something)
-
-    VARIABLE = 2
-
-
-myfoobar = Foobar()
-print(myfoobar.VARIABLE)
+# sourcemeter.mode = "4-wire resistance"
+# print(f"{sourcemeter.resistance = }")
+# print(f'{sourcemeter.ask("P0") = }')
+print(f"{sourcemeter.state = }")
