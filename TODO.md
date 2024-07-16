@@ -8,6 +8,9 @@
 
 # Source configuration
 - Dialog that allows different instruments to be configured and selected.
+- Intialize instrument
+  - Could select file that holds configuration
+  - File could be just a command string to send to instrument
 
 # When starting a new measurement:
 - Configure sources or chose an old configuration
